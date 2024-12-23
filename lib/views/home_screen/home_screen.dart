@@ -206,6 +206,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         12.ph,
                       ],
                     ),
+                  ),
+                  Positioned(
+                    top: 14.h,
+                    left: 0,
+                    right: 0,
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        Container(
+                          width: 65.w,
+                          height: 65
+                              .w, // Slightly smaller to create the border effect
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: AppColor.whiteColor.withOpacity(0.2),
+                                width: 2.r),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                AppColor.whiteColor.withOpacity(0.6),
+                                AppColor.primaryColor.withOpacity(0.3),
+                              ],
+                            ),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        Image.asset(
+                          "assets/images/piramid.png",
+                          width: 12.w,
+                        )
+                      ],
+                    ),
                   )
                 ],
               ),
