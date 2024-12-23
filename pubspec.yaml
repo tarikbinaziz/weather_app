@@ -18,6 +18,7 @@ dependencies:
   location: ^7.0.1
   page_transition: ^2.1.0
   pretty_dio_logger: ^1.4.0
+  shimmer: ^3.0.0
   weather: ^3.1.1
 
 dev_dependencies:
