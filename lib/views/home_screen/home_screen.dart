@@ -12,6 +12,7 @@ import 'package:weather_app/controller/selected_day_controller.dart';
 import 'package:weather_app/controller/weather_controller.dart';
 import 'package:weather_app/utils/extensions.dart';
 import 'package:weather_app/views/home_screen/components/bottom_custom.dart';
+import 'package:weather_app/views/home_screen/components/shimmer_widget.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -24,185 +25,193 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final weatherState = ref.watch(weatherProvider);
-    print("${weatherState.currentWeather?.sunset}");
 
     return Scaffold(
       extendBody: true,
-      bottomNavigationBar: SizedBox(
-        height: 272.h,
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            CustomPaint(
-              size: Size(
-                  double.infinity, 272.h), // Use screenWidth to take full width
-              painter: RPSCustomPainter(),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.w),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
+      bottomNavigationBar: weatherState.isLoading
+          ? const SizedBox()
+          : SizedBox(
+              height: 272.h,
+              child: Stack(
+                alignment: Alignment.bottomCenter,
                 children: [
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          color: AppColor.whiteColor.withOpacity(0.2),
-                          width: 2.r),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          AppColor.whiteColor.withOpacity(0.1),
-                          AppColor.whiteColor.withOpacity(0.0),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: Row(
-                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Image.asset("assets/images/sun-fog.6 1.png",
-                            width: 50.w),
-                        32.pw,
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "Sunset",
-                              style: AppTextStyle.normalBodyCircular.copyWith(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16.sp,
-                              ),
-                            ),
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: weatherState.currentWeather == null
-                                        ? "--"
-                                        : formatToHour(DateTime.parse(
-                                            "${weatherState.currentWeather?.sunset}",
-                                          )),
-                                    style: TextStyle(
-                                      color: AppColor.whiteColor,
-                                      fontSize: 18.sp,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                      text: "PM",
-                                      style: TextStyle(
-                                        color: AppColor.whiteColor,
-                                        fontSize: 12.sp,
-                                      ))
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        32.pw,
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Sunrise",
-                              style: AppTextStyle.normalBodyCircular.copyWith(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16.sp,
-                              ),
-                            ),
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: weatherState.currentWeather == null
-                                        ? "--"
-                                        : formatToHour(DateTime.parse(
-                                            "${weatherState.currentWeather?.sunrise}",
-                                          )),
-                                    style: TextStyle(
-                                      color: AppColor.whiteColor,
-                                      fontSize: 18.sp,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                      text: "AM",
-                                      style: TextStyle(
-                                        color: AppColor.whiteColor,
-                                        fontSize: 12.sp,
-                                      ))
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                  CustomPaint(
+                    size: Size(double.infinity,
+                        272.h), // Use screenWidth to take full width
+                    painter: RPSCustomPainter(),
                   ),
-                  8.ph,
-                  Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                          color: AppColor.whiteColor.withOpacity(0.2),
-                          width: 2.r),
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          AppColor.whiteColor.withOpacity(0.1),
-                          AppColor.whiteColor.withOpacity(0.0),
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 30.w),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Image.asset("assets/images/uv_index.png", width: 50.w),
-                        32.pw,
-                        Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 8.w, vertical: 4.h),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: AppColor.whiteColor.withOpacity(0.2),
+                                width: 2.r),
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                AppColor.whiteColor.withOpacity(0.1),
+                                AppColor.whiteColor.withOpacity(0.0),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                "UV Index",
-                                style: AppTextStyle.normalBodyCircular.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white.withOpacity(0.6)
-                                    //fontSize: 18.sp,
+                              Image.asset("assets/images/sun-fog.6 1.png",
+                                  width: 50.w),
+                              32.pw,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    "Sunset",
+                                    style: AppTextStyle.normalBodyCircular
+                                        .copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16.sp,
                                     ),
+                                  ),
+                                  RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: weatherState.currentWeather ==
+                                                  null
+                                              ? "--"
+                                              : formatToHour(DateTime.parse(
+                                                  "${weatherState.currentWeather?.sunset}",
+                                                )),
+                                          style: TextStyle(
+                                            color: AppColor.whiteColor,
+                                            fontSize: 18.sp,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                            text: "PM",
+                                            style: TextStyle(
+                                              color: AppColor.whiteColor,
+                                              fontSize: 12.sp,
+                                            ))
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                "1 Low",
-                                style: AppTextStyle.normalBodyCircular.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 20.sp,
-                                    color: Colors.white.withOpacity(0.6)),
+                              32.pw,
+                              Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Sunrise",
+                                    style: AppTextStyle.normalBodyCircular
+                                        .copyWith(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16.sp,
+                                    ),
+                                  ),
+                                  RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: weatherState.currentWeather ==
+                                                  null
+                                              ? "--"
+                                              : formatToHour(DateTime.parse(
+                                                  "${weatherState.currentWeather?.sunrise}",
+                                                )),
+                                          style: TextStyle(
+                                            color: AppColor.whiteColor,
+                                            fontSize: 18.sp,
+                                          ),
+                                        ),
+                                        TextSpan(
+                                            text: "AM",
+                                            style: TextStyle(
+                                              color: AppColor.whiteColor,
+                                              fontSize: 12.sp,
+                                            ))
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
                         ),
+                        8.ph,
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 8.w, vertical: 4.h),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                                color: AppColor.whiteColor.withOpacity(0.2),
+                                width: 2.r),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                AppColor.whiteColor.withOpacity(0.1),
+                                AppColor.whiteColor.withOpacity(0.0),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Row(
+                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Image.asset("assets/images/uv_index.png",
+                                  width: 50.w),
+                              32.pw,
+                              Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      "UV Index",
+                                      style: AppTextStyle.normalBodyCircular
+                                          .copyWith(
+                                              fontWeight: FontWeight.w500,
+                                              color:
+                                                  Colors.white.withOpacity(0.6)
+                                              //fontSize: 18.sp,
+                                              ),
+                                    ),
+                                    Text(
+                                      "1 Low",
+                                      style: AppTextStyle.normalBodyCircular
+                                          .copyWith(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 20.sp,
+                                              color: Colors.white
+                                                  .withOpacity(0.6)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        12.ph,
                       ],
                     ),
-                  ),
-                  12.ph,
+                  )
                 ],
               ),
-            )
-          ],
-        ),
-      ),
+            ),
       body: weatherState.isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
+          ? buildShimmerLoading(context)
           : weatherState.errorMessage.isNotEmpty
               ? Text("Error: ${weatherState.errorMessage}")
               : SingleChildScrollView(

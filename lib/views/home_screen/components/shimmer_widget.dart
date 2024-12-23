@@ -1,169 +1,128 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:weather_app/config/app_color.dart';
 
-class WeatherShimmer extends StatelessWidget {
+class ShimmerEffect extends StatelessWidget {
+  final double width;
+  final double height;
+  final BoxShape shape;
+
+  const ShimmerEffect({
+    super.key,
+    required this.width,
+    required this.height,
+    this.shape = BoxShape.rectangle,
+  });
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blue[900], // Match the weather app background
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Shimmer.fromColors(
-          baseColor: Colors.grey[300]!,
-          highlightColor: Colors.grey[100]!,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // City Name and Current Location Placeholder
-              Container(
-                height: 20,
-                width: 120,
-                margin: EdgeInsets.only(top: 40, bottom: 10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              // Temperature Placeholder
-              Container(
-                height: 80,
-                width: 100,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              SizedBox(height: 10),
-              // Weather Description Placeholder
-              Container(
-                height: 20,
-                width: 150,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              SizedBox(height: 20),
-              // Tabs Placeholder (Today | Next Days)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Container(
-                    height: 30,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                  Container(
-                    height: 30,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              // Hourly Forecast Placeholder
-              SizedBox(
-                height: 100,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 6,
-                  itemBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 40,
-                          width: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Container(
-                          height: 20,
-                          width: 30,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              // Sunrise and Sunset Info Placeholder
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  // Sunrise
-                  Column(
-                    children: [
-                      Container(
-                        height: 30,
-                        width: 30,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Container(
-                        height: 20,
-                        width: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ],
-                  ),
-                  // Sunset
-                  Column(
-                    children: [
-                      Container(
-                        height: 30,
-                        width: 30,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Container(
-                        height: 20,
-                        width: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              // UV Index Placeholder
-              Container(
-                height: 20,
-                width: 100,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ],
-          ),
+    return Shimmer.fromColors(
+      baseColor: AppColor.secondaryColor,
+      highlightColor: AppColor.secondaryColor.withOpacity(0.5),
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade300,
+          shape: shape,
+          borderRadius: shape == BoxShape.rectangle
+              ? BorderRadius.circular(
+                  100.r) // Apply borderRadius only for BoxShape.rectangle
+              : null,
         ),
       ),
     );
   }
+}
+
+Widget buildShimmerLoading(BuildContext context) {
+  return Container(
+    height: MediaQuery.of(context).size.height,
+    width: MediaQuery.of(context).size.width,
+    decoration: const BoxDecoration(
+      gradient: LinearGradient(
+        stops: [0.1, 1],
+        colors: [AppColor.secondaryColor, AppColor.primaryColor],
+        begin: Alignment.topLeft,
+        end: Alignment.centerRight,
+      ),
+    ),
+    child: SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(height: 60.h),
+          // Shimmer effect for city name
+          ShimmerEffect(width: 200.w, height: 50.h),
+          SizedBox(height: 15.h),
+          // Shimmer effect for location text
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ShimmerEffect(width: 30.w, height: 30.h, shape: BoxShape.circle),
+              SizedBox(width: 5.w),
+              ShimmerEffect(width: 100.w, height: 30.h),
+            ],
+          ),
+          SizedBox(height: 20.h),
+          // Shimmer effect for weather icon and temperature
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ShimmerEffect(
+                    width: 100.w,
+                    height: 100.h,
+                    shape: BoxShape.circle), // Weather icon shimmer
+
+                ShimmerEffect(width: 180.w, height: 90.h),
+              ],
+            ),
+          ),
+          SizedBox(height: 15.h),
+          // Shimmer effect for weather description
+          ShimmerEffect(width: 200.w, height: 40.h),
+          SizedBox(height: 32.h),
+          // Shimmer effect for bottom tabs (Today / Next Days)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ShimmerEffect(width: 120.w, height: 40.h),
+              SizedBox(width: 8.w),
+              ShimmerEffect(width: 160.w, height: 40.h),
+            ],
+          ),
+          SizedBox(height: 30.h),
+          // Shimmer effect for hourly weather list
+          SizedBox(
+            height: 158.h,
+            child: Padding(
+              padding: EdgeInsets.only(left: 16.w),
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 6, // Placeholder for 6 hours
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 12.0),
+                    child: ShimmerEffect(width: 65.w, height: 100.h),
+                  );
+                },
+              ),
+            ),
+          ),
+
+          SizedBox(height: 30.h),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ShimmerEffect(width: 300.w, height: 90.h),
+              SizedBox(height: 16.h),
+              ShimmerEffect(width: 280.w, height: 90.h),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
 }

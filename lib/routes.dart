@@ -4,10 +4,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:weather_app/views/home_screen/home_screen.dart';
 
 class Routes {
-  /*We are mapping all th eroutes here
-  so that we can call any named route
-  without making typing mistake
-  */
+
   Routes._();
   //core
   static const home = '/';
