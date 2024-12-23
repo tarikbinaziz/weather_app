@@ -1,8 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
+import 'package:weather/weather.dart';
+import 'package:weather_app/components/format_hour.dart';
+import 'package:weather_app/components/loader.dart';
 import 'package:weather_app/config/app_color.dart';
 import 'package:weather_app/config/app_text.dart';
+import 'package:weather_app/controller/selected_day_controller.dart';
 import 'package:weather_app/controller/weather_controller.dart';
 import 'package:weather_app/utils/extensions.dart';
 import 'package:weather_app/views/home_screen/components/bottom_custom.dart';
@@ -18,6 +24,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final weatherState = ref.watch(weatherProvider);
+    print("${weatherState.currentWeather?.sunset}");
+
     return Scaffold(
       extendBody: true,
       bottomNavigationBar: SizedBox(
@@ -73,11 +81,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: "5:51",
+                                    text: weatherState.currentWeather == null
+                                        ? "--"
+                                        : formatToHour(DateTime.parse(
+                                            "${weatherState.currentWeather?.sunset}",
+                                          )),
                                     style: TextStyle(
                                       color: AppColor.whiteColor,
                                       fontSize: 18.sp,
-                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   TextSpan(
@@ -91,6 +102,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                           ],
                         ),
+                        32.pw,
                         Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,11 +118,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: "5:51",
+                                    text: weatherState.currentWeather == null
+                                        ? "--"
+                                        : formatToHour(DateTime.parse(
+                                            "${weatherState.currentWeather?.sunrise}",
+                                          )),
                                     style: TextStyle(
                                       color: AppColor.whiteColor,
                                       fontSize: 18.sp,
-                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   TextSpan(
@@ -210,7 +225,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       children: [
                         SizedBox(height: 60.h),
                         Text(
-                          "Dhaka",
+                          weatherState.currentWeather?.areaName ?? "",
                           style: AppTextStyle.largeTitle,
                         ),
                         15.ph,
@@ -233,33 +248,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.asset(
-                              "assets/images/partly_cloudy 1.png",
+                            CachedNetworkImage(
+                              imageUrl:
+                                  "https://openweathermap.org/img/wn/${weatherState.currentWeather?.weatherIcon}@4x.png",
                               width: 135.w,
                               height: 130.h,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => CustomShimmer(
+                                width: 80.w,
+                                height: 80.w,
+                                boxShape: BoxShape.circle,
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  const Icon(Icons.error),
                             ),
                             27.pw,
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  "13",
+                                  "${weatherState.currentWeather?.temperature?.celsius?.round()}",
                                   style:
                                       AppTextStyle.normalBodyCircular.copyWith(
                                     fontWeight: FontWeight.w300,
-                                    fontSize: 122.sp,
+                                    fontSize: 102.sp,
                                     fontFamily: "Circular Std",
                                     height: 1,
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.only(top: 16.0.r),
+                                  padding: EdgeInsets.only(top: 20.0.r),
                                   child: Text(
                                     "°",
                                     style: AppTextStyle.normalBodyCircular
                                         .copyWith(
                                       fontWeight: FontWeight.w300,
-                                      fontSize: 110.sp,
+                                      fontSize: 90.sp,
                                       fontFamily: "Circular Std",
                                       height: 1,
                                     ),
@@ -270,7 +294,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ],
                         ),
                         Text(
-                          "Partly Cloud - H:17°  L:4°",
+                          "${weatherState.currentWeather?.weatherDescription} - H:${weatherState.currentWeather?.tempMax?.celsius?.toStringAsFixed(0)}°  L:${weatherState.currentWeather?.tempMin?.celsius?.toStringAsFixed(0)}°",
+                          //"Partly Cloud - H:17°  L:4°",
                           style: AppTextStyle.normalBodyCircular.copyWith(
                               fontWeight: FontWeight.w300, fontSize: 18.sp),
                         ),
@@ -280,9 +305,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            _buildTabButton("Today", true),
+                            _buildTabButton("Today", 0, () {
+                              if (ref
+                                      .read(selectedDayProvider.notifier)
+                                      .state !=
+                                  0) {
+                                ref.read(selectedDayProvider.notifier).state =
+                                    0;
+                              }
+                            }),
                             8.pw,
-                            _buildTabButton("Next Days", false),
+                            _buildTabButton("Next Days", 1, () {
+                              debugPrint(
+                                  "Next days selected  ${ref.read(selectedDayProvider)}");
+
+                              if (ref
+                                      .read(selectedDayProvider.notifier)
+                                      .state !=
+                                  2) {
+                                debugPrint(
+                                    "Next days selected  not 2  ${ref.read(selectedDayProvider)}");
+                                ref.read(selectedDayProvider.notifier).state++;
+                              }
+                            }),
                           ],
                         ),
                         SizedBox(height: 25.h),
@@ -292,10 +337,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           child: Padding(
                             padding: EdgeInsets.only(left: 16.w),
                             child: ListView.builder(
+                              physics: const BouncingScrollPhysics(),
                               scrollDirection: Axis.horizontal,
-                              itemCount: 6,
-                              itemBuilder: (context, index) =>
-                                  _buildWeatherCard(),
+                              itemCount: weatherState.groupedForecast.isNotEmpty
+                                  ? weatherState
+                                      .groupedForecast[
+                                          ref.watch(selectedDayProvider)]
+                                      .length
+                                  : 0,
+                              itemBuilder: (context, hourIndex) {
+                                final weather = weatherState.groupedForecast[
+                                    ref.watch(selectedDayProvider)][hourIndex];
+                                return _buildWeatherCard(weather: weather);
+                              },
                             ),
                           ),
                         ),
@@ -306,24 +360,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildTabButton(String title, bool isSelected) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 10.h),
-      decoration: BoxDecoration(
-        color: isSelected
-            ? AppColor.whiteColor.withOpacity(0.1)
-            : Colors.black.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(25.r),
-      ),
-      child: Text(
-        title,
-        style: AppTextStyle.normalBody
-            .copyWith(fontWeight: FontWeight.bold, fontSize: 14.sp),
+  Widget _buildTabButton(String title, int dayIndex, void Function()? onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 10.h),
+        decoration: BoxDecoration(
+          color: dayIndex == ref.watch(selectedDayProvider) ||
+                  ref.watch(selectedDayProvider) == 2 && title == "Next Days"
+              ? AppColor.whiteColor.withOpacity(0.1)
+              : Colors.black.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(25.r),
+        ),
+        child: Text(
+          title,
+          style: AppTextStyle.normalBody
+              .copyWith(fontWeight: FontWeight.bold, fontSize: 14.sp),
+        ),
       ),
     );
   }
 
-  Widget _buildWeatherCard() {
+  Widget _buildWeatherCard({
+    required Weather weather,
+  }) {
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -348,18 +408,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Now",
+                _formatTime(weather.date),
                 style: AppTextStyle.normalBodyCircular.copyWith(
                   fontWeight: FontWeight.w500,
                   fontSize: 16.sp,
                 ),
               ),
               8.ph,
-              Icon(Icons.wb_sunny, color: AppColor.sunColor, size: 30.r),
+              CachedNetworkImage(
+                imageUrl:
+                    "https://openweathermap.org/img/wn/${weather.weatherIcon}@2x.png",
+                width: 30.w,
+                height: 30.h,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => CustomShimmer(
+                  width: 30.w,
+                  height: 30.w,
+                  boxShape: BoxShape.circle,
+                ),
+              ),
               8.ph,
               SizedBox(height: 5.h),
               Text(
-                "14°",
+                "${weather.temperature?.celsius?.toInt() ?? '--'}°",
                 style: AppTextStyle.normalBodyCircular.copyWith(
                   fontWeight: FontWeight.w300,
                 ),
@@ -371,34 +442,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildInfoCard(String label, String value) {
-    return Container(
-      width: 160.w,
-      padding: EdgeInsets.all(20.w),
-      decoration: BoxDecoration(
-        color: AppColor.transparentWhite,
-        borderRadius: BorderRadius.circular(15.r),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: AppColor.greyTextColor,
-              fontSize: 14.sp,
-            ),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              color: AppColor.whiteColor,
-              fontSize: 18.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
+  String _formatTime(DateTime? dateTime) {
+    if (dateTime == null) return '--';
+    return DateFormat('ha').format(dateTime).toUpperCase();
   }
 }

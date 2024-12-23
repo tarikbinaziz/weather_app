@@ -7,6 +7,7 @@ environment:
   sdk: ^3.5.3
 
 dependencies:
+  cached_network_image: ^3.4.1
   dio: ^5.7.0
   flutter:
     sdk: flutter
@@ -15,6 +16,8 @@ dependencies:
   gap: ^3.0.1
   geolocator: ^13.0.2
   hive_flutter: ^1.1.0
+  http: ^1.2.2
+  intl: ^0.20.1
   location: ^7.0.1
   page_transition: ^2.1.0
   pretty_dio_logger: ^1.4.0
