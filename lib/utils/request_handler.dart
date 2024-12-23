@@ -1,9 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
-import 'package:weather_app/config/app_constants.dart';
 import 'package:weather_app/utils/globalFunction.dart';
-
 
 void addApiInterceptors(Dio dio) {
   dio.options.connectTimeout = const Duration(seconds: 20);
@@ -26,8 +23,8 @@ void addApiInterceptors(Dio dio) {
   dio.interceptors.add(
     InterceptorsWrapper(
       onRequest: (options, handler) {
-        final authBox = Hive.box(AppConstants.authBox);
-        final token = authBox.get(AppConstants.authToken);
+        const token = '';
+
         options.headers['Authorization'] = "Bearer $token";
         handler.next(options);
       },
