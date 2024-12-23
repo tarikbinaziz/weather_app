@@ -15,7 +15,7 @@ class RPSCustomPainter extends CustomPainter {
     paintFill0.shader = ui.Gradient.linear(
       Offset(size.width * 0.0, size.height * 0.5),
       Offset(size.width, size.height * 0.5),
-      [const Color(0xffffffff), AppColor.primaryColor],
+      [const Color(0xffffffff).withOpacity(0.6), AppColor.primaryColor],
       [0.00, 1.00],
     );
 

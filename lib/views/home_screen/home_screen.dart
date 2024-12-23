@@ -13,37 +13,173 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       extendBody: true,
       bottomNavigationBar: SizedBox(
-        height: 272,
-        child: CustomPaint(
-          size: const Size(
-              double.infinity, 272), // Use screenWidth to take full width
-          painter: RPSCustomPainter(),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.home, color: Colors.black),
+        height: 272.h,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            CustomPaint(
+              size: Size(
+                  double.infinity, 272.h), // Use screenWidth to take full width
+              painter: RPSCustomPainter(),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.w),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          color: AppColor.whiteColor.withOpacity(0.2),
+                          width: 2.r),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          AppColor.whiteColor.withOpacity(0.1),
+                          AppColor.whiteColor.withOpacity(0.0),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Image.asset("assets/images/sun-fog.6 1.png",
+                            width: 50.w),
+                        32.pw,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "Sunset",
+                              style: AppTextStyle.normalBodyCircular.copyWith(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16.sp,
+                              ),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: "5:51",
+                                    style: TextStyle(
+                                      color: AppColor.whiteColor,
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                      text: "PM",
+                                      style: TextStyle(
+                                        color: AppColor.whiteColor,
+                                        fontSize: 12.sp,
+                                      ))
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Sunrise",
+                              style: AppTextStyle.normalBodyCircular.copyWith(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 16.sp,
+                              ),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: "5:51",
+                                    style: TextStyle(
+                                      color: AppColor.whiteColor,
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                      text: "AM",
+                                      style: TextStyle(
+                                        color: AppColor.whiteColor,
+                                        fontSize: 12.sp,
+                                      ))
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  8.ph,
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          color: AppColor.whiteColor.withOpacity(0.2),
+                          width: 2.r),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          AppColor.whiteColor.withOpacity(0.1),
+                          AppColor.whiteColor.withOpacity(0.0),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Image.asset("assets/images/uv_index.png", width: 50.w),
+                        32.pw,
+                        Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "UV Index",
+                                style: AppTextStyle.normalBodyCircular.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white.withOpacity(0.6)
+                                    //fontSize: 18.sp,
+                                    ),
+                              ),
+                              Text(
+                                "1 Low",
+                                style: AppTextStyle.normalBodyCircular.copyWith(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 20.sp,
+                                    color: Colors.white.withOpacity(0.6)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  12.ph,
+                ],
               ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.search, color: Colors.black),
-              ),
-              const SizedBox(width: 50), // Space for FAB
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.notifications, color: Colors.black),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.person, color: Colors.black),
-              ),
-            ],
-          ),
+            )
+          ],
         ),
       ),
       body: SingleChildScrollView(
         child: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               stops: [0.1, 1],
@@ -146,20 +282,6 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 20.h),
-              // Sunset/Sunrise row
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildInfoCard("Sunset", "5:51 PM"),
-                    _buildInfoCard("Sunrise", "7:00 AM"),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20.h),
-              _buildInfoCard("UV Index", "1 Low"),
             ],
           ),
         ),
