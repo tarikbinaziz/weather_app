@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:weather_app/config/app_color.dart';
 import 'package:weather_app/config/app_text.dart';
+import 'package:weather_app/controller/weather_controller.dart';
 import 'package:weather_app/utils/extensions.dart';
 import 'package:weather_app/views/home_screen/components/bottom_custom.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    final weatherState = ref.watch(weatherProvider);
     return Scaffold(
       extendBody: true,
       bottomNavigationBar: SizedBox(
@@ -181,116 +184,125 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              stops: [0.1, 1],
-              colors: [
-                AppColor.secondaryColor,
-                AppColor.primaryColor,
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.centerRight,
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(height: 60.h),
-              Text(
-                "Dhaka",
-                style: AppTextStyle.largeTitle,
-              ),
-              15.ph,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    "assets/images/map_pin.png",
-                    height: 13.63.h,
-                    width: 11.83.w,
-                  ),
-                  5.pw,
-                  Text(
-                    "Current Location",
-                    style: AppTextStyle.smallBody,
-                  ),
-                ],
-              ),
-              20.ph,
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    "assets/images/partly_cloudy 1.png",
-                    width: 135.w,
-                    height: 130.h,
-                  ),
-                  27.pw,
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "13",
-                        style: AppTextStyle.normalBodyCircular.copyWith(
-                          fontWeight: FontWeight.w300,
-                          fontSize: 122.sp,
-                          fontFamily: "Circular Std",
-                          height: 1,
-                        ),
+      body: weatherState.isLoading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : weatherState.errorMessage.isNotEmpty
+              ? Text("Error: ${weatherState.errorMessage}")
+              : SingleChildScrollView(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        stops: [0.1, 1],
+                        colors: [
+                          AppColor.secondaryColor,
+                          AppColor.primaryColor,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.centerRight,
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 16.0.r),
-                        child: Text(
-                          "°",
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 60.h),
+                        Text(
+                          "Dhaka",
+                          style: AppTextStyle.largeTitle,
+                        ),
+                        15.ph,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/images/map_pin.png",
+                              height: 13.63.h,
+                              width: 11.83.w,
+                            ),
+                            5.pw,
+                            Text(
+                              "Current Location",
+                              style: AppTextStyle.smallBody,
+                            ),
+                          ],
+                        ),
+                        20.ph,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              "assets/images/partly_cloudy 1.png",
+                              width: 135.w,
+                              height: 130.h,
+                            ),
+                            27.pw,
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "13",
+                                  style:
+                                      AppTextStyle.normalBodyCircular.copyWith(
+                                    fontWeight: FontWeight.w300,
+                                    fontSize: 122.sp,
+                                    fontFamily: "Circular Std",
+                                    height: 1,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(top: 16.0.r),
+                                  child: Text(
+                                    "°",
+                                    style: AppTextStyle.normalBodyCircular
+                                        .copyWith(
+                                      fontWeight: FontWeight.w300,
+                                      fontSize: 110.sp,
+                                      fontFamily: "Circular Std",
+                                      height: 1,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        Text(
+                          "Partly Cloud - H:17°  L:4°",
                           style: AppTextStyle.normalBodyCircular.copyWith(
-                            fontWeight: FontWeight.w300,
-                            fontSize: 110.sp,
-                            fontFamily: "Circular Std",
-                            height: 1,
+                              fontWeight: FontWeight.w300, fontSize: 18.sp),
+                        ),
+
+                        32.ph,
+                        // Tab bar
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildTabButton("Today", true),
+                            8.pw,
+                            _buildTabButton("Next Days", false),
+                          ],
+                        ),
+                        SizedBox(height: 25.h),
+                        // Hourly weather
+                        SizedBox(
+                          height: 158.h,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 16.w),
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: 6,
+                              itemBuilder: (context, index) =>
+                                  _buildWeatherCard(),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              Text(
-                "Partly Cloud - H:17°  L:4°",
-                style: AppTextStyle.normalBodyCircular
-                    .copyWith(fontWeight: FontWeight.w300, fontSize: 18.sp),
-              ),
-
-              32.ph,
-              // Tab bar
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildTabButton("Today", true),
-                  8.pw,
-                  _buildTabButton("Next Days", false),
-                ],
-              ),
-              SizedBox(height: 25.h),
-              // Hourly weather
-              SizedBox(
-                height: 158.h,
-                child: Padding(
-                  padding: EdgeInsets.only(left: 16.w),
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 6,
-                    itemBuilder: (context, index) => _buildWeatherCard(),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
