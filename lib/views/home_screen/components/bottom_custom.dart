@@ -1,51 +1,57 @@
-import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+import 'package:weather_app/config/app_color.dart';
 
 class RPSCustomPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    // Layer 1
-    Paint paint_fill_0 = Paint()
+    Paint paintFill0 = Paint()
       ..color = const Color.fromARGB(255, 255, 255, 255)
       ..style = PaintingStyle.fill
       ..strokeWidth = size.width * 0.00
       ..strokeCap = StrokeCap.butt
       ..strokeJoin = StrokeJoin.miter;
-    paint_fill_0.shader = ui.Gradient.linear(
-      Offset(size.width * 0.37, size.height * 0.50),
-      Offset(size.width * 0.63, size.height * 0.50),
-      [Color(0xff000000), Color(0xffffffff)],
+    paintFill0.shader = ui.Gradient.linear(
+      Offset(size.width * 0.0, size.height * 0.5),
+      Offset(size.width, size.height * 0.5),
+      [const Color(0xffffffff), AppColor.primaryColor],
       [0.00, 1.00],
     );
 
     Path path_0 = Path();
-    path_0.moveTo(size.width * 0.4630000, size.height * 0.3548571);
-    path_0.quadraticBezierTo(size.width * 0.4606833, size.height * 0.3830143,
-        size.width * 0.4664333, size.height * 0.3975143);
-    path_0.quadraticBezierTo(size.width * 0.4660583, size.height * 0.4111571,
-        size.width * 0.4780333, size.height * 0.4169571);
-    path_0.quadraticBezierTo(size.width * 0.4979417, size.height * 0.4330143,
-        size.width * 0.5121083, size.height * 0.4169429);
-    path_0.quadraticBezierTo(size.width * 0.5290667, size.height * 0.3991571,
-        size.width * 0.5260000, size.height * 0.3548571);
-    path_0.lineTo(size.width * 0.6250000, size.height * 0.4300000);
-    path_0.lineTo(size.width * 0.6250000, size.height * 0.6442857);
-    path_0.lineTo(size.width * 0.3741667, size.height * 0.6442857);
-    path_0.lineTo(size.width * 0.3750000, size.height * 0.4285714);
-    path_0.lineTo(size.width * 0.4630000, size.height * 0.3548571);
+    // Start at the bottom left corner
+    path_0.moveTo(0, size.height);
+
+    // Bottom left corner to the left of the circular notch
+    path_0.lineTo(0, size.height * 0.5);
+
+    // Left curve leading into the circular notch
+    path_0.quadraticBezierTo(
+      size.width * 0.2, size.height * 0.2, // Control point
+      size.width * 0.4, size.height * 0.2, // Endpoint
+    );
+
+    // Circular notch
+    path_0.arcToPoint(
+      Offset(size.width * 0.6, size.height * 0.2), // End of arc
+      radius: Radius.circular(size.width * 0.1), // Circular radius
+      clockwise: false,
+    );
+
+    // Right curve leading out of the circular notch
+    path_0.quadraticBezierTo(
+      size.width * 0.8, size.height * 0.2, // Control point
+      size.width, size.height * 0.5, // Endpoint
+    );
+
+    // Bottom right corner
+    path_0.lineTo(size.width, size.height);
+
+    // Close the path
     path_0.close();
 
-    canvas.drawPath(path_0, paint_fill_0);
-
-    // Layer 1
-    Paint paint_stroke_0 = Paint()
-      ..color = const Color.fromARGB(255, 33, 150, 243)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width * 0.00
-      ..strokeCap = StrokeCap.butt
-      ..strokeJoin = StrokeJoin.miter;
-
-    canvas.drawPath(path_0, paint_stroke_0);
+    canvas.drawPath(path_0, paintFill0);
   }
 
   @override

@@ -10,17 +10,14 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Get the screen size
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
-      bottomNavigationBar: CustomPaint(
-        size: Size(screenWidth,
-            screenHeight * 0.15), // Use screenWidth to take full width
-        painter: RPSCustomPainter(),
-        child: SizedBox(
-          width: double.infinity, // Ensures the container takes full width
-          height: screenHeight * 0.15, // Adjust height based on screen size
+      extendBody: true,
+      bottomNavigationBar: SizedBox(
+        height: 272,
+        child: CustomPaint(
+          size: const Size(
+              double.infinity, 272), // Use screenWidth to take full width
+          painter: RPSCustomPainter(),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
