@@ -272,7 +272,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: weatherState.isLoading
           ? buildShimmerLoading(context)
           : weatherState.errorMessage.isNotEmpty
-              ? Text("Error: ${weatherState.errorMessage}")
+              ? Center(child: Text("Error: ${weatherState.errorMessage}"))
               : SingleChildScrollView(
                   child: Container(
                     height: MediaQuery.of(context).size.height,
@@ -291,12 +291,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SizedBox(height: 60.h),
+                        SizedBox(height: 52.h),
                         Text(
                           weatherState.currentWeather?.areaName ?? "",
-                          style: AppTextStyle.largeTitle,
+                          style:
+                              AppTextStyle.largeTitle.copyWith(fontSize: 24.sp),
                         ),
-                        15.ph,
+                        4.ph,
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -312,15 +314,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                           ],
                         ),
-                        20.ph,
+                        10.ph,
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             CachedNetworkImage(
                               imageUrl:
                                   "https://openweathermap.org/img/wn/${weatherState.currentWeather?.weatherIcon}@4x.png",
-                              width: 135.w,
-                              height: 130.h,
+                              width: 120.w,
+                              height: 110.h,
                               fit: BoxFit.cover,
                               placeholder: (context, url) => CustomShimmer(
                                 width: 80.w,
@@ -339,19 +341,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   style:
                                       AppTextStyle.normalBodyCircular.copyWith(
                                     fontWeight: FontWeight.w300,
-                                    fontSize: 102.sp,
+                                    fontSize: 80.sp,
                                     fontFamily: "Circular Std",
                                     height: 1,
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.only(top: 20.0.r),
+                                  padding: EdgeInsets.only(top: 12.0.h),
                                   child: Text(
                                     "°",
                                     style: AppTextStyle.normalBodyCircular
                                         .copyWith(
                                       fontWeight: FontWeight.w300,
-                                      fontSize: 90.sp,
+                                      fontSize: 80.sp,
                                       fontFamily: "Circular Std",
                                       height: 1,
                                     ),
@@ -361,14 +363,56 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                           ],
                         ),
+
                         Text(
                           "${weatherState.currentWeather?.weatherDescription} - H:${weatherState.currentWeather?.tempMax?.celsius?.toStringAsFixed(0)}°  L:${weatherState.currentWeather?.tempMin?.celsius?.toStringAsFixed(0)}°",
-                          //"Partly Cloud - H:17°  L:4°",
                           style: AppTextStyle.normalBodyCircular.copyWith(
-                              fontWeight: FontWeight.w300, fontSize: 18.sp),
+                              fontWeight: FontWeight.w300,
+                              fontSize: 16.sp,
+                              height: 1),
+                        ),
+                        8.ph,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                weaterDetailsWidget(
+                                    title: "Pressure",
+                                    value:
+                                        "${weatherState.currentWeather?.pressure?.toStringAsFixed(0)} hPa"),
+                                weaterDetailsWidget(
+                                    title: "Humidity",
+                                    value:
+                                        "${weatherState.currentWeather?.humidity?.toStringAsFixed(0)} %"),
+                                weaterDetailsWidget(
+                                    title: "Wind Gust",
+                                    value:
+                                        "${weatherState.currentWeather?.windGust?.toStringAsFixed(0)} m/s"),
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                weaterDetailsWidget(
+                                    title: "Wind Speed",
+                                    value:
+                                        "${weatherState.currentWeather?.windSpeed?.toStringAsFixed(0) ?? "0"} m/s"),
+                                weaterDetailsWidget(
+                                    title: "Rain Last hour",
+                                    value:
+                                        "${weatherState.currentWeather?.rainLastHour?.toStringAsFixed(0) ?? "0"} mm"),
+                                weaterDetailsWidget(
+                                    title: "Snow Last hour",
+                                    value:
+                                        "${weatherState.currentWeather?.snowLastHour?.toStringAsFixed(0) ?? "0"} mm"),
+                              ],
+                            )
+                          ],
                         ),
 
-                        32.ph,
+                        24.ph,
                         // Tab bar
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -398,10 +442,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             }),
                           ],
                         ),
-                        SizedBox(height: 25.h),
-                        // Hourly weather
+                        SizedBox(height: 24.h),
+
                         SizedBox(
-                          height: 158.h,
+                          height: 140.h,
                           child: Padding(
                             padding: EdgeInsets.only(left: 16.w),
                             child: ListView.builder(
@@ -425,6 +469,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
                 ),
+    );
+  }
+
+  weaterDetailsWidget({String? title, String? value}) {
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+              text: title,
+              style: AppTextStyle.normalBodyCircular
+                  .copyWith(fontWeight: FontWeight.w300, fontSize: 14.sp)),
+          const TextSpan(text: " : "),
+          TextSpan(
+              text: value,
+              style: AppTextStyle.normalBodyCircular
+                  .copyWith(fontWeight: FontWeight.w500, fontSize: 14.sp)),
+        ],
+      ),
     );
   }
 
