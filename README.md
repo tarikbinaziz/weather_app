@@ -113,6 +113,8 @@ static const Color primaryColor = Color(<NEW_COLOR_CODE>);
 <img src="https://github.com/user-attachments/assets/aeeb4748-347c-4d26-84a4-e878206487de" alt="Screenshot_1735029425" width="375"/>
 
 
+[Download APK](https://github.com/tarikbinaziz/weather_app/raw/main/releases/tarik-weather-app.apk)
+
 
 
 
