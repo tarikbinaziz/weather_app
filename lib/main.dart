@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:weather_app/config/app_constants.dart';
+import 'package:weather_app/config/theme.dart';
 import 'package:weather_app/routes.dart';
 import 'package:weather_app/utils/globalFunction.dart';
 
@@ -34,7 +35,7 @@ class MyApp extends ConsumerWidget {
           builder: (BuildContext context, Box appSettingsBox, Widget? child) {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
-              // theme: AppTheme.lightTheme,
+              theme: AppTheme.lightTheme,
               onGenerateRoute: generatedRoutes,
               navigatorKey: GlobalFunction.navigatorKey,
               initialRoute: Routes.home,

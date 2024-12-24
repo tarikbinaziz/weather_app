@@ -7,8 +7,10 @@ import 'package:weather/weather.dart';
 import 'package:weather_app/config/app_color.dart';
 import 'package:weather_app/config/app_text.dart';
 import 'package:weather_app/controller/selected_day_controller.dart';
+import 'package:weather_app/controller/temp_unit_controller.dart';
 import 'package:weather_app/controller/weather_controller.dart';
 import 'package:weather_app/utils/extensions.dart';
+import 'package:weather_app/utils/temp_converter.dart';
 import 'package:weather_app/widgets/bottom_custom.dart';
 import 'package:weather_app/widgets/format_hour.dart';
 import 'package:weather_app/widgets/loader.dart';
@@ -25,9 +27,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final weatherState = ref.watch(weatherProvider);
+    final temperatureUnit = ref.watch(temperatureUnitProvider);
 
     return Scaffold(
       extendBody: true,
+      // appBar: AppBar(
+      //   title: Text(
+      //       "Display in ${temperatureUnit.isCelsius ? 'Fahrenheit' : 'Celsius'}"),
+      //   actions: [
+      //     Switch(
+      //       value: temperatureUnit.isCelsius,
+      //       onChanged: (value) {
+      //         temperatureUnit.toggleUnit();
+      //       },
+      //     ),
+      //   ],
+      // ),
       bottomNavigationBar: weatherState.isLoading
           ? const SizedBox()
           : SizedBox(
@@ -292,25 +307,50 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(height: 52.h),
-                        Text(
-                          weatherState.currentWeather?.areaName ?? "",
-                          style:
-                              AppTextStyle.largeTitle.copyWith(fontSize: 24.sp),
-                        ),
-                        4.ph,
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        Stack(
                           children: [
-                            Image.asset(
-                              "assets/images/map_pin.png",
-                              height: 13.63.h,
-                              width: 11.83.w,
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  weatherState.currentWeather?.areaName ?? "",
+                                  style: AppTextStyle.largeTitle
+                                      .copyWith(fontSize: 24.sp),
+                                ),
+                                4.ph,
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      "assets/images/map_pin.png",
+                                      height: 13.63.h,
+                                      width: 11.83.w,
+                                    ),
+                                    5.pw,
+                                    Text(
+                                      "Current Location",
+                                      style: AppTextStyle.smallBody,
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                            5.pw,
-                            Text(
-                              "Current Location",
-                              style: AppTextStyle.smallBody,
+                            Positioned(
+                              top: 16.h,
+                              right: 0,
+                              child: Row(
+                                children: [
+                                  Text(temperatureUnit.isCelsius ? 'C ' : 'F ',
+                                      style: AppTextStyle.title),
+                                  Switch(
+                                    activeColor: AppColor.whiteColor,
+                                    value: temperatureUnit.isCelsius,
+                                    onChanged: (value) {
+                                      temperatureUnit.toggleUnit();
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -337,7 +377,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
-                                  "${weatherState.currentWeather?.temperature?.celsius?.round()}",
+                                  "${temperatureUnit.isCelsius ? weatherState.currentWeather?.temperature?.celsius?.round() : TemperatureConverter.toFahrenheit(weatherState.currentWeather?.temperature?.celsius ?? 0).round()}",
                                   style:
                                       AppTextStyle.normalBodyCircular.copyWith(
                                     fontWeight: FontWeight.w300,
@@ -365,7 +405,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
 
                         Text(
-                          "${weatherState.currentWeather?.weatherDescription} - H:${weatherState.currentWeather?.tempMax?.celsius?.toStringAsFixed(0)}°  L:${weatherState.currentWeather?.tempMin?.celsius?.toStringAsFixed(0)}°",
+                          "${weatherState.currentWeather?.weatherDescription} - H:${temperatureUnit.isCelsius ? weatherState.currentWeather?.tempMax?.celsius?.round() : TemperatureConverter.toFahrenheit(weatherState.currentWeather?.tempMax?.celsius ?? 0).round()}°  L:${temperatureUnit.isCelsius ? weatherState.currentWeather?.tempMin?.celsius?.round() : TemperatureConverter.toFahrenheit(weatherState.currentWeather?.tempMin?.celsius ?? 0).round()}°",
                           style: AppTextStyle.normalBodyCircular.copyWith(
                               fontWeight: FontWeight.w300,
                               fontSize: 16.sp,
@@ -514,6 +554,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildWeatherCard({
     required Weather weather,
   }) {
+    final tempUnit = ref.watch(temperatureUnitProvider);
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -560,7 +601,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               8.ph,
               SizedBox(height: 5.h),
               Text(
-                "${weather.temperature?.celsius?.toInt() ?? '--'}°",
+                "${tempUnit.isCelsius ? weather.temperature?.celsius?.toInt() ?? '--' : weather.temperature?.fahrenheit?.toInt() ?? '--'}°",
                 style: AppTextStyle.normalBodyCircular.copyWith(
                   fontWeight: FontWeight.w300,
                 ),
