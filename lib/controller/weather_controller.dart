@@ -1,14 +1,20 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:weather/weather.dart';
 import 'package:weather_app/config/app_constants.dart';
+import 'package:weather_app/utils/globalFunction.dart';
 
 // make a provider to store weather data
 final weatherProvider =
     StateNotifierProvider<WeatherNotifier, WeatherState>((ref) {
   final weatherFactory = WeatherFactory(
-     AppConstants.weatherFactoryKey ); // Replace with your API key
-  return WeatherNotifier(weatherFactory, ref: ref);
+      AppConstants.weatherFactoryKey); // Replace with your API key
+  return WeatherNotifier(
+    weatherFactory,
+    ref: ref,
+  );
 });
 
 class WeatherState {
@@ -43,17 +49,20 @@ class WeatherState {
 // Create a StateNotifier to manage weather data
 class WeatherNotifier extends StateNotifier<WeatherState> {
   final Ref ref;
+
   final WeatherFactory _weatherFactory;
 
-  WeatherNotifier(this._weatherFactory, {required this.ref})
-      : super(WeatherState(isLoading: true)) {
-    fetchWeatherData();
+  WeatherNotifier(
+    this._weatherFactory, {
+    required this.ref,
+  }) : super(WeatherState(isLoading: true)) {
+    fetchWeatherData(GlobalFunction.navigatorKey.currentState!.context);
   }
 
-  Future<void> fetchWeatherData() async {
+  Future<void> fetchWeatherData(context) async {
     try {
       // Fetch current location
-      Position position = await _getUserLocation();
+      Position position = await _getUserLocation(context);
 
       // Fetch current weather
       Weather currentWeather = await _weatherFactory.currentWeatherByLocation(
@@ -113,9 +122,11 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
         date1.day == date2.day;
   }
 
-  Future<Position> _getUserLocation() async {
+  Future<Position> _getUserLocation(BuildContext context) async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
+      // Show a dialog to the user
+      _showServiceDisabledDialog(context);
       throw Exception('Location services are disabled.');
     }
 
@@ -123,15 +134,71 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
+        _showPermissionDialog(context);
         throw Exception('Location permissions are denied');
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
+      _showPermissionDialog(context, isPermanentlyDenied: true);
       throw Exception('Location permissions are permanently denied.');
     }
 
     return await Geolocator.getCurrentPosition();
+  }
+
+  void _showServiceDisabledDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Location Services Disabled'),
+        content: const Text(
+            'Location services are required for this app. Please enable them in settings.'),
+        actions: [
+          TextButton(
+            onPressed: () => SystemNavigator.pop(), // Closes the app,
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Geolocator.openLocationSettings();
+            },
+            child: const Text('Open Settings'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPermissionDialog(BuildContext context,
+      {bool isPermanentlyDenied = false}) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Location Permission'),
+        content: Text(isPermanentlyDenied
+            ? 'Location permissions are permanently denied. Please enable them in settings.'
+            : 'Location permissions are required to provide weather information.'),
+        actions: [
+          TextButton(
+            onPressed: () => SystemNavigator.pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              if (isPermanentlyDenied) {
+                Geolocator.openAppSettings()
+                    .then((val) => SystemNavigator.pop());
+              } else {
+                Geolocator.requestPermission();
+              }
+            },
+            child: const Text('Open Settings'),
+          ),
+        ],
+      ),
+    );
   }
 }
 

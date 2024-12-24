@@ -31,13 +31,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       extendBody: true,
-      bottomNavigationBar: weatherState.isLoading
-          ? const SizedBox()
-          : BottomNavWidget(weatherState: weatherState),
+      bottomNavigationBar:
+          weatherState.isLoading || weatherState.errorMessage.isNotEmpty
+              ? const SizedBox()
+              : BottomNavWidget(weatherState: weatherState),
       body: weatherState.isLoading
           ? buildShimmerLoading(context)
           : weatherState.errorMessage.isNotEmpty
-              ? Center(child: Text("Error: ${weatherState.errorMessage}"))
+              ? Center(
+                  child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Text(
+                    "Error: ${weatherState.errorMessage}",
+                    textAlign: TextAlign.center,
+                    style: AppTextStyle.normalBody,
+                  ),
+                ))
               : SingleChildScrollView(
                   child: Container(
                     height: MediaQuery.of(context).size.height,
