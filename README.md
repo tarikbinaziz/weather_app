@@ -18,7 +18,7 @@ This Weather App provides real-time weather information using the `weather` pack
 
 Before you begin, ensure you have met the following requirements:
 
-- [Flutter SDK](https://flutter.dev/docs/get-started/install) installed.
+- [Flutter SDK v3.24.3](https://flutter.dev/docs/get-started/install) installed.
 - An editor such as [Visual Studio Code](https://code.visualstudio.com/) or [Android Studio](https://developer.android.com/studio).
 - API key for OpenWeatherMap.
 
