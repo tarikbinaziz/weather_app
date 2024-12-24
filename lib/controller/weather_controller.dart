@@ -1,12 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:weather/weather.dart';
+import 'package:weather_app/config/app_constants.dart';
 
 // make a provider to store weather data
 final weatherProvider =
     StateNotifierProvider<WeatherNotifier, WeatherState>((ref) {
   final weatherFactory = WeatherFactory(
-      "9fd291a7232c8941fa28f107f03a2264"); // Replace with your API key
+     AppConstants.weatherFactoryKey ); // Replace with your API key
   return WeatherNotifier(weatherFactory, ref: ref);
 });
 

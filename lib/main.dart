@@ -12,7 +12,6 @@ void main() async {
 
   await Hive.initFlutter();
   await Hive.openBox(AppConstants.appSettingsBox);
-
   await Hive.openBox(AppConstants.locationBox);
 
   runApp(const ProviderScope(child: MyApp()));
@@ -46,4 +45,3 @@ class MyApp extends ConsumerWidget {
     );
   }
 }
-//
