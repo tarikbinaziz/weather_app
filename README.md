@@ -4,6 +4,9 @@
 
 This Weather App provides real-time weather information using the `weather` package and OpenWeatherMap API. Users can view the current weather for a predefined location and toggle between Celsius and Fahrenheit units. The app is built with Flutter and designed to be easy to set up and customize.
 
+![Screenshot_1735029420](https://github.com/user-attachments/assets/5477ca19-a7ee-4544-a665-d4613a05f466)
+![Screenshot_1735029425](https://github.com/user-attachments/assets/aeeb4748-347c-4d26-84a4-e878206487de)
+
 ---
 
 ## Features
