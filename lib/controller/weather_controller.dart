@@ -1,9 +1,5 @@
-import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:http/http.dart' as http;
 import 'package:weather/weather.dart';
 
 // make a provider to store weather data
@@ -13,8 +9,6 @@ final weatherProvider =
       "9fd291a7232c8941fa28f107f03a2264"); // Replace with your API key
   return WeatherNotifier(weatherFactory, ref: ref);
 });
-
-
 
 class WeatherState {
   final Weather? currentWeather;
@@ -70,7 +64,6 @@ class WeatherNotifier extends StateNotifier<WeatherState> {
 
       // Group forecast by day
       List<List<Weather>> groupedForecast = _groupForecastByDay(forecast);
- 
 
       state = state.copyWith(
         currentWeather: currentWeather,
@@ -164,5 +157,3 @@ class UVIndexState {
     );
   }
 }
-
-

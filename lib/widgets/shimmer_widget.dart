@@ -18,7 +18,7 @@ class ShimmerEffect extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shimmer.fromColors(
-      baseColor: AppColor.secondaryColor,
+      baseColor: AppColor.secondaryColor.withOpacity(0.2),
       highlightColor: AppColor.secondaryColor.withOpacity(0.5),
       child: Container(
         width: width,
@@ -51,9 +51,9 @@ Widget buildShimmerLoading(BuildContext context) {
     child: SingleChildScrollView(
       child: Column(
         children: [
-          SizedBox(height: 60.h),
+          SizedBox(height: 80.h),
           // Shimmer effect for city name
-          ShimmerEffect(width: 200.w, height: 50.h),
+          ShimmerEffect(width: 200.w, height: 40.h),
           SizedBox(height: 15.h),
           // Shimmer effect for location text
           Row(
@@ -93,32 +93,26 @@ Widget buildShimmerLoading(BuildContext context) {
               ShimmerEffect(width: 160.w, height: 40.h),
             ],
           ),
-          SizedBox(height: 30.h),
-          // Shimmer effect for hourly weather list
-          SizedBox(
-            height: 158.h,
-            child: Padding(
-              padding: EdgeInsets.only(left: 16.w),
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 6, // Placeholder for 6 hours
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 12.0),
-                    child: ShimmerEffect(width: 65.w, height: 100.h),
-                  );
-                },
-              ),
-            ),
+          SizedBox(height: 40.h),
+          // Shimmer effect for hourly weather list,
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ShimmerEffect(width: 65.w, height: 100.h),
+              ShimmerEffect(width: 65.w, height: 100.h),
+              ShimmerEffect(width: 65.w, height: 100.h),
+              ShimmerEffect(width: 65.w, height: 100.h),
+            ],
           ),
 
-          SizedBox(height: 30.h),
+          SizedBox(height: 50.h),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              ShimmerEffect(width: 300.w, height: 90.h),
+              ShimmerEffect(width: 300.w, height: 40.h),
               SizedBox(height: 16.h),
-              ShimmerEffect(width: 280.w, height: 90.h),
+              ShimmerEffect(width: 200.w, height: 40.h),
             ],
           ),
         ],
